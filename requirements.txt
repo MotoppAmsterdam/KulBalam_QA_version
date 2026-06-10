@@ -1,0 +1,16 @@
+starlette
+fastapi[standard]
+uvicorn
+sqlalchemy
+passlib >= 1.7.4
+bcrypt != 5.0.0   #due to breaking error in v5.0.0
+aiofiles
+pydantic
+pydantic[email]
+email-validator
+python-multipart
+python-jose
+websockets
+faker
+pytest
+httpx
