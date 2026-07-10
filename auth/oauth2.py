@@ -1,4 +1,4 @@
-from fastapi.security import OAuth2PasswordBearer #let the system knows we want to secure our end-point.
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.param_functions import Depends
 from typing import Optional
 from datetime import datetime, timedelta
@@ -10,7 +10,7 @@ from fastapi import HTTPException, status
 from db import db_user
 from db.models import DbUser
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token') #not create a end-point, just say this end-point will be require to recieve token for our scheme.
+oauth2_scheme = HTTPBearer()
  
 SECRET_KEY = '006c35540019ce650f09fb583f54e6c6c673ecf903a18906cfa9097c9d8872f0' #allows us to sign a token we generate 
 ALGORITHM = 'HS256'
@@ -28,12 +28,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)): #get_db = db session
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme), db: Session = Depends(get_db)):
   credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail='Could not validate credentials',
     headers={'WWW-Authenticate': 'Bearer'}
   )
+  token = credentials.credentials
   try:
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     username: str = payload.get('sub')

@@ -14,3 +14,6 @@ websockets
 faker
 pytest
 httpx
+bandit
+mypy
+ruff
